@@ -62,13 +62,12 @@ fun HabitItem( // SOLID - S
             )
         }
 
-        // TODO: Linear Progress Indicator instead Boxes
+        // TODO: Linear Progress Indicator instead dividers
         Box(
             modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
         ) {
 
             Divider(
-                thickness = 1.dp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
@@ -80,10 +79,12 @@ fun HabitItem( // SOLID - S
             // TODO: длина цветного прогрессбара равна доле выполненных привычек за месяц
             // val lastMonthCheckPercent = habit.lastMonthCheckCount/(30*(habit.targetWeekCheckCount/7)).toFloat()
             Divider(
-                thickness = 1.dp,
                 modifier = Modifier
                     .fillMaxWidth(0.4f)
-                    .background(GreenBar, shape = RoundedCornerShape(20.dp))
+                    .background(
+                        color = GreenBar,
+                        shape = RoundedCornerShape(20.dp)
+                    )
             )
         }
     }
