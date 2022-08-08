@@ -1,6 +1,5 @@
 package com.codeliner.habits.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,14 +16,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.codeliner.habits.R
-import com.codeliner.habits.data.HabitRepository
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = viewModel()
+) {
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
@@ -59,20 +61,21 @@ fun MainScreen() {
 
         Divider(Modifier.padding(vertical = 16.dp))
 
-        val habitRepository = HabitRepository()
-        val getAllData = habitRepository.getAllData()
-        LazyColumn(
-        ) {
-            items(items = getAllData) { habit ->
-                HabitItem(habit = habit)
+        LazyColumn {
+            items(items = viewModel.getAllData()) { habit ->
+                HabitItem(
+                    habit = habit
+                )
             }
         }
-
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(
+        modifier = Modifier,
+        viewModel = MainViewModel()
+    )
 }
