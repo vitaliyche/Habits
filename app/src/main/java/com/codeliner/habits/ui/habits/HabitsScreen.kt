@@ -1,17 +1,21 @@
 package com.codeliner.habits.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,7 +26,7 @@ import com.codeliner.habits.ui.habits.AddHabitBottomSheet
 import com.codeliner.habits.ui.habits.HabitsViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun HabitsScreen(
     modifier: Modifier = Modifier,
@@ -34,14 +38,14 @@ fun HabitsScreen(
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
     val scope = rememberCoroutineScope()
+
     BottomSheetScaffold(
         sheetPeekHeight = 0.dp,
         scaffoldState = scaffoldState,
         sheetContent = {
-            AddHabitBottomSheet()
-        },
-
-        ) {
+                AddHabitBottomSheet()
+        }
+    ) {
 
         Column(
             modifier = modifier
@@ -55,8 +59,9 @@ fun HabitsScreen(
 
                 Text(
                     text = "Habits",
-                    style = TextStyle(fontSize = 20.sp),
-                    fontWeight = FontWeight.Bold
+                    style = TextStyle(fontSize = 24.sp),
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Cursive
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -89,11 +94,12 @@ fun HabitsScreen(
 
             Divider(Modifier.padding(vertical = 16.dp))
 
-            LazyColumn {
+            LazyColumn() {
                 items(items = viewModel.getAllData()) { habit ->
                     HabitItem(habit = habit)
                 }
             }
+
         }
     }
 }
