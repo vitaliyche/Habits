@@ -47,19 +47,19 @@ fun HabitItem( // SOLID - S
                     fontSize = 15.sp
                 )
 
-                Text(
-                    text = habit.lastCheckedDate,
+                /*Text(
+                    *//*text = habit.lastCheckedDate,*//*
                     fontSize = 12.sp,
                     color = GrayText
-                )
+                )*/
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Counter(
+            /*Counter(
                 lastWeekCheckCount = habit.lastWeekCheckCount,
                 targetWeekCheckCount = habit.targetWeekCheckCount
-            )
+            )*/
         }
 
         // TODO: Linear Progress Indicator instead dividers
@@ -114,11 +114,11 @@ private fun HabitItemPreview() {
 }
 
 private val previewHabitItem = Habit(
-    id =  0,
-    checked = false,
+    id = 0,
+    /*checked = false,*/
     habitName = "Name",
-    lastCheckedDate = "sd",
-    lastWeekCheckCount = 0,
+    /*lastCheckedDate = "sd",
+    lastWeekCheckCount = 0,*/
     targetWeekCheckCount = 0,
-    lastMonthCheckCount = 0
+    /*lastMonthCheckCount = 0*/
 )

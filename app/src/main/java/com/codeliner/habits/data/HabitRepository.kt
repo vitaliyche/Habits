@@ -8,21 +8,21 @@ class HabitRepository {
         return listOf(
             Habit(
                 id =  0,
-                checked = true,
+                //checked = true,
                 habitName = "Встать до 07 утра",
-                lastCheckedDate = "Пятница, 05 Август",
-                lastWeekCheckCount = 2,
+                //lastCheckedDate = "Пятница, 05 Август",
+                //lastWeekCheckCount = 2,
                 targetWeekCheckCount = 4,
-                lastMonthCheckCount = 10
+                //lastMonthCheckCount = 10
             ),
             Habit(
                 id =  1,
-                checked = false,
+                //checked = false,
                 habitName = "Учить английский",
-                lastCheckedDate = "Суббота, 06 Август",
-                lastWeekCheckCount = 3,
+                //lastCheckedDate = "Суббота, 06 Август",
+                //lastWeekCheckCount = 3,
                 targetWeekCheckCount = 3,
-                lastMonthCheckCount = 1
+                //lastMonthCheckCount = 1
             )
 
         )

@@ -1,8 +1,9 @@
 package com.codeliner.habits.ui.habits
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
+import android.app.Application
+import android.content.Context
+import android.text.TextUtils
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,26 +13,30 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import com.codeliner.habits.MainActivity
+import com.codeliner.habits.NavigationComponent
 import com.codeliner.habits.R
+import com.codeliner.habits.data.HabitRepository
+import com.codeliner.habits.model.Habit
 import com.codeliner.habits.ui.theme.GrayText
 import com.codeliner.habits.ui.theme.LightGrayBackground
+import kotlin.math.round
 
 @Composable
-fun AddHabitBottomSheet() {
+fun AddHabitBottomSheet(mHabitViewModel: HabitViewModel) {
+
 
     Column(
         modifier = Modifier
@@ -87,9 +92,54 @@ fun AddHabitBottomSheet() {
             )
         )
 
+        Text(
+            text = "Select Days per Week",
+            style = TextStyle(fontSize = 15.sp),
+            color = GrayText,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+        )
+
+        var sliderPosition by remember { mutableStateOf(3f) }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(text = "1", fontSize = 15.sp)
+            Text(text = "2", fontSize = 15.sp)
+            Text(text = "3", fontSize = 15.sp)
+            Text(text = "4", fontSize = 15.sp)
+            Text(text = "5", fontSize = 15.sp)
+            Text(text = "6", fontSize = 15.sp)
+            Text(text = "7", fontSize = 15.sp)
+        }
+
+        Slider(
+            value = sliderPosition,
+            valueRange = 1F..7F,
+            steps = 5,
+            onValueChange = { sliderPosition = it }
+        )
+
         Button(
             onClick = {
-                TODO("Переход на экран привычек")
+
+                val habitName = textFieldState
+                val targetDaysPerWeek = sliderPosition.toInt()
+
+                if(inputCheck(habitName)) {
+                    //Create Habit Object
+                    val habit = Habit(0, habitName, targetDaysPerWeek)
+                    // Add Data to Database
+                    //mHabitViewModel.addHabit(habit)
+                    /*Toast.makeText(this, "Succesfully added", Toast.LENGTH_LONG).show()*/
+                    /*navController.navigate(popBackStack)*/
+                } else {
+                    /*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*/
+                }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black),
             shape = RoundedCornerShape(20.dp),
@@ -110,8 +160,14 @@ fun AddHabitBottomSheet() {
     }
 }
 
+fun inputCheck(habitName: String): Boolean {
+    return !(TextUtils.isEmpty(habitName))
+
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun AddHabitBottomSheetPreview() {
-    AddHabitBottomSheet()
+    AddHabitBottomSheet(mHabitViewModel = HabitViewModel())
 }
