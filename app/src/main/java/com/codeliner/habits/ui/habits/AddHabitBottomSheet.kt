@@ -169,5 +169,5 @@ fun inputCheck(habitName: String): Boolean {
 @Preview(showBackground = true)
 @Composable
 fun AddHabitBottomSheetPreview() {
-    AddHabitBottomSheet(mHabitViewModel = HabitViewModel())
+    AddHabitBottomSheet(mHabitViewModel = HabitViewModel(HabitRepository()))
 }

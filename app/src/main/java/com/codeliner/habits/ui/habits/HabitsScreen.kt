@@ -1,6 +1,5 @@
-package com.codeliner.habits.ui
+package com.codeliner.habits.ui.habits
 
-import android.app.Application
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,6 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,16 +22,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.codeliner.habits.R
-import com.codeliner.habits.ui.habits.AddHabitBottomSheet
-import com.codeliner.habits.ui.habits.HabitViewModel
+import com.codeliner.habits.data.HabitRepository
+import com.codeliner.habits.ui.HabitItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun HabitsScreen(
     modifier: Modifier = Modifier,
-    viewModel: HabitViewModel = viewModel()
+    viewModel: HabitViewModel = viewModel(
+        factory = HabitViewModelFactory(HabitRepository())
+    )
 ) {
 
     val bottomSheetState =
@@ -94,8 +99,9 @@ fun HabitsScreen(
             Divider(Modifier.padding(vertical = 16.dp))
 
             //TODO: вывести значения из базы в список
-            LazyColumn() {
-                items(items = viewModel.getAllData()) { habit ->
+            val habits by viewModel.habitsData.observeAsState()
+            LazyColumn {
+                items(items = habits.orEmpty()) { habit ->
                     HabitItem(habit = habit)
                 }
             }
@@ -109,6 +115,6 @@ fun HabitsScreen(
 fun HabitsScreenPreview() {
     HabitsScreen(
         modifier = Modifier,
-        viewModel = HabitViewModel()
+        viewModel = HabitViewModel(HabitRepository())
     )
 }
