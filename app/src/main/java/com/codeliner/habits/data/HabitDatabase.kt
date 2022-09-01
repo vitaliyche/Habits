@@ -11,47 +11,47 @@ import com.codeliner.habits.model.Habit
     entities = [
         Habit::class,
         /*CheckedItem::class*/
-               ],
+    ],
     version = 1,
 )
-abstract class HabitDatabase: RoomDatabase() {
+abstract class HabitDatabase : RoomDatabase() {
 
-    /*abstract fun habitDao(): HabitDao
+    abstract fun habitDao(): HabitDao
 
     companion object {
 
         @Volatile // предотвратить гонку потоков
         private var INSTANCE: HabitDatabase? = null
 
-        fun getDataBase(context: Context): HabitDatabase{
+        fun getDataBase(context: Context): HabitDatabase {
 
             // предотвращает создание одной БД двумя потоками одновременно
             synchronized(this) {
 
-                return INSTANCE ?: Room.databaseBuilder(
+                /*return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     HabitDatabase::class.java,
                     "habit_database"
                 ).build().also {
                     INSTANCE = it
+                }*/
+
+                val tempInstance = INSTANCE
+
+                if (tempInstance != null) {
+                    return tempInstance
                 }
 
-            *//*val tempInstance = INSTANCE
-
-            if (tempInstance != null) {
-                return tempInstance
-            }*//*
-
-                *//*val instance = Room.databaseBuilder(
+                val instance = Room.databaseBuilder(
                     context.applicationContext,
                     HabitDatabase::class.java,
                     "habit_database"
                 ).build()
 
                 INSTANCE = instance
-                return instance*//*
+                return instance
             }
 
         }
-    }*/
+    }
 }

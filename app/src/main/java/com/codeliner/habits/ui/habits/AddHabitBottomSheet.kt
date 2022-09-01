@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.codeliner.habits.MainActivity
 import com.codeliner.habits.NavigationComponent
 import com.codeliner.habits.R
+import com.codeliner.habits.data.HabitDao
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.model.Habit
 import com.codeliner.habits.ui.theme.GrayText
@@ -35,7 +36,9 @@ import com.codeliner.habits.ui.theme.LightGrayBackground
 import kotlin.math.round
 
 @Composable
-fun AddHabitBottomSheet(mHabitViewModel: HabitViewModel) {
+fun AddHabitBottomSheet(
+    /*mHabitViewModel: HabitViewModel*/
+) {
 
 
     Column(
@@ -134,8 +137,9 @@ fun AddHabitBottomSheet(mHabitViewModel: HabitViewModel) {
                     //Create Habit Object
                     val habit = Habit(0, habitName, targetDaysPerWeek)
                     // Add Data to Database
-                    //mHabitViewModel.addHabit(habit)
-                    /*Toast.makeText(this, "Succesfully added", Toast.LENGTH_LONG).show()*/
+                    //mHabitViewModel.insertHabit(habit)
+                    /*Toast.makeText(context, "Succesfully added", Toast.LENGTH_LONG).show()*/
+                    //TODO: скрыть фрагмент при нажатии на кнопку создать
                     /*navController.navigate(popBackStack)*/
                 } else {
                     /*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*/
@@ -166,8 +170,9 @@ fun inputCheck(habitName: String): Boolean {
 }
 
 
+/*
 @Preview(showBackground = true)
 @Composable
-fun AddHabitBottomSheetPreview() {
-    AddHabitBottomSheet(mHabitViewModel = HabitViewModel(HabitRepository()))
-}
+fun AddHabitBottomSheetPreview(habitDao: HabitDao) {
+    AddHabitBottomSheet(mHabitViewModel = HabitViewModel(HabitRepository(habitDao)))
+}*/

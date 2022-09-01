@@ -1,8 +1,10 @@
 package com.codeliner.habits.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.codeliner.habits.model.Habit
 
-class HabitRepository {
+class HabitRepository() {
 
     fun getAllData(): List<Habit> {
         return listOf(
@@ -24,7 +26,13 @@ class HabitRepository {
                 targetWeekCheckCount = 3,
                 //lastMonthCheckCount = 1
             )
-
         )
     }
+
+    //fun getAllData(habitDao: HabitDao): LiveData<List<Habit>> = habitDao.getAllData()
+
+    suspend fun insertHabit(habit: Habit) {
+        insertHabit(habit)
+    }
+
 }

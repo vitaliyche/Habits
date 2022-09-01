@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.codeliner.habits.R
+import com.codeliner.habits.data.HabitDao
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.ui.HabitItem
 import kotlinx.coroutines.launch
@@ -47,12 +48,12 @@ fun HabitsScreen(
         sheetPeekHeight = 0.dp,
         scaffoldState = scaffoldState,
         sheetContent = {
-                AddHabitBottomSheet(viewModel)
+                AddHabitBottomSheet()
         }
     ) {
 
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
@@ -99,8 +100,9 @@ fun HabitsScreen(
             Divider(Modifier.padding(vertical = 16.dp))
 
             //TODO: вывести значения из базы в список
-            val habits by viewModel.habitsData.observeAsState()
+            //val habits by viewModel.habitsData.observeAsState()
             LazyColumn {
+                val habits = viewModel.habitsData
                 items(items = habits.orEmpty()) { habit ->
                     HabitItem(habit = habit)
                 }
@@ -110,11 +112,11 @@ fun HabitsScreen(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun HabitsScreenPreview() {
     HabitsScreen(
         modifier = Modifier,
         viewModel = HabitViewModel(HabitRepository())
     )
-}
+}*/

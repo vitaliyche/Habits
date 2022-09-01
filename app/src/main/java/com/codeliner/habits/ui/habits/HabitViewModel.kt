@@ -1,23 +1,35 @@
 package com.codeliner.habits.ui.habits
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.app.Application
+import androidx.lifecycle.*
+import com.codeliner.habits.data.HabitDatabase
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.model.Habit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HabitViewModel(
-    private val habitRepository: HabitRepository
-) : ViewModel() {
+    private var habitRepository: HabitRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
-    val habitsData: MutableLiveData<List<Habit>> = MutableLiveData()
+    var habitsData: List<Habit>
 
     init {
-        loadData()
+        //val habitDao = HabitDatabase.getDataBase(application).habitDao()
+        habitRepository = HabitRepository()
+        habitsData = habitRepository.getAllData()
+        //loadData(application)
     } // каждый раз при создании viewmodel when load data
 
-    private fun loadData() {
-        habitsData.postValue(habitRepository.getAllData()) // change threat automatically
+    private fun loadData(application: Application) {
+        /*habitsData.postValue(habitRepository.getAllData()) // change threat automatically*/
+    }
+
+    fun insertHabit(habit: Habit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            habitRepository.insertHabit(habit)
+        }
     }
 
     /*private val readAllData: LiveData<List<Habit>>
@@ -46,7 +58,7 @@ class HabitViewModelFactory(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return HabitViewModel(habitRepository) as T
+        return HabitViewModel(habitRepository, application = Application()) as T
     }
 }
 
