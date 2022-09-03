@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,13 +17,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.NavController
 import com.codeliner.habits.R
-import com.codeliner.habits.data.HabitDao
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.ui.HabitItem
 import kotlinx.coroutines.launch
@@ -33,9 +30,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun HabitsScreen(
     modifier: Modifier = Modifier,
+    habitRepository: HabitRepository,
+    navController: NavController,
     viewModel: HabitViewModel = viewModel(
-        factory = HabitViewModelFactory(HabitRepository())
-    )
+        factory = HabitViewModelFactory(habitRepository)
+    ),
 ) {
 
     val bottomSheetState =
@@ -48,7 +47,11 @@ fun HabitsScreen(
         sheetPeekHeight = 0.dp,
         scaffoldState = scaffoldState,
         sheetContent = {
-                AddHabitBottomSheet()
+            AddHabitBottomSheet(viewModel, closeBottomSheetCallback = {
+                scope.launch {
+                    bottomSheetState.collapse()
+                }
+            })
         }
     ) {
 
@@ -94,20 +97,16 @@ fun HabitsScreen(
                     contentDescription = "add habit",
                     tint = Color.DarkGray
                 )
-
             }
 
             Divider(Modifier.padding(vertical = 16.dp))
 
-            //TODO: вывести значения из базы в список
-            //val habits by viewModel.habitsData.observeAsState()
+            val habits by viewModel.habitsData.observeAsState()
             LazyColumn {
-                val habits = viewModel.habitsData
-                items(items = habits.orEmpty()) { habit ->
+                items(items = habits ?: arrayListOf()) { habit ->
                     HabitItem(habit = habit)
                 }
             }
-
         }
     }
 }

@@ -6,6 +6,7 @@ import androidx.room.*
 import com.codeliner.habits.model.CheckedItem
 import com.codeliner.habits.model.Habit
 import com.codeliner.habits.model.relations.HabitWithCheckedItem
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HabitDao {
@@ -14,14 +15,14 @@ interface HabitDao {
     suspend fun insertHabit(habit: Habit)
 
     @Query("SELECT * FROM habit ORDER BY id ASC")
-    //fun getAllData(): LiveData<List<Habit>>
+    fun getAllData(): Flow<List<Habit>>
 
-    @Insert
-    suspend fun insertCheckedItem(checkedItem: CheckedItem)
+//    @Insert
+//    suspend fun insertCheckedItem(checkedItem: CheckedItem)
 
-    @Transaction // для потокобезопасности
-    @Query("SELECT * FROM habit WHERE habitName = :habitName")
-    suspend fun getCheckedHabitWithHabitName(habitName: String): List<HabitWithCheckedItem>
+//    @Transaction // для потокобезопасности
+//    @Query("SELECT * FROM habit WHERE habitName = :habitName")
+//    suspend fun getCheckedHabitWithHabitName(habitName: String): List<HabitWithCheckedItem>
 
 
 }

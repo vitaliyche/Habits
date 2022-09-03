@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import com.codeliner.habits.MainActivity
 import com.codeliner.habits.NavigationComponent
 import com.codeliner.habits.R
@@ -37,9 +38,9 @@ import kotlin.math.round
 
 @Composable
 fun AddHabitBottomSheet(
-    /*mHabitViewModel: HabitViewModel*/
+    mHabitViewModel: HabitViewModel,
+    closeBottomSheetCallback:(Boolean) -> Unit
 ) {
-
 
     Column(
         modifier = Modifier
@@ -137,10 +138,10 @@ fun AddHabitBottomSheet(
                     //Create Habit Object
                     val habit = Habit(0, habitName, targetDaysPerWeek)
                     // Add Data to Database
-                    //mHabitViewModel.insertHabit(habit)
+                    mHabitViewModel.insertHabit(habit)
                     /*Toast.makeText(context, "Succesfully added", Toast.LENGTH_LONG).show()*/
                     //TODO: скрыть фрагмент при нажатии на кнопку создать
-                    /*navController.navigate(popBackStack)*/
+                    closeBottomSheetCallback.invoke(true)
                 } else {
                     /*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*/
                 }

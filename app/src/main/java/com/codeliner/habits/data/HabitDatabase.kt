@@ -9,10 +9,10 @@ import com.codeliner.habits.model.Habit
 
 @Database(
     entities = [
-        Habit::class,
-        /*CheckedItem::class*/
+        Habit::class
     ],
     version = 1,
+    exportSchema = false
 )
 abstract class HabitDatabase : RoomDatabase() {
 
