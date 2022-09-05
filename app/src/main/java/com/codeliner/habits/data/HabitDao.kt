@@ -17,12 +17,4 @@ interface HabitDao {
     @Query("SELECT * FROM habit ORDER BY id ASC")
     fun getAllData(): Flow<List<Habit>>
 
-//    @Insert
-//    suspend fun insertCheckedItem(checkedItem: CheckedItem)
-
-//    @Transaction // для потокобезопасности
-//    @Query("SELECT * FROM habit WHERE habitName = :habitName")
-//    suspend fun getCheckedHabitWithHabitName(habitName: String): List<HabitWithCheckedItem>
-
-
 }

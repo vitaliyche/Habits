@@ -28,16 +28,7 @@ abstract class HabitDatabase : RoomDatabase() {
             // предотвращает создание одной БД двумя потоками одновременно
             synchronized(this) {
 
-                /*return INSTANCE ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    HabitDatabase::class.java,
-                    "habit_database"
-                ).build().also {
-                    INSTANCE = it
-                }*/
-
                 val tempInstance = INSTANCE
-
                 if (tempInstance != null) {
                     return tempInstance
                 }

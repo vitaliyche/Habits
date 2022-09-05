@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.codeliner.habits.data.HabitDao
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.model.Habit
 import com.codeliner.habits.ui.theme.GrayText
+import com.codeliner.habits.ui.theme.GreenBar
 import com.codeliner.habits.ui.theme.LightGrayBackground
 import kotlin.math.round
 
@@ -121,11 +123,19 @@ fun AddHabitBottomSheet(
             Text(text = "7", fontSize = 15.sp)
         }
 
+        //TODO: установить зеленый цвет слайдера
         Slider(
             value = sliderPosition,
             valueRange = 1F..7F,
             steps = 5,
-            onValueChange = { sliderPosition = it }
+            onValueChange = { sliderPosition = it },
+            colors = SliderDefaults.colors(
+                thumbColor = GreenBar,
+                activeTrackColor = GreenBar,
+                inactiveTrackColor = GreenBar,
+                activeTickColor = Color.White,
+                inactiveTickColor = Color.White
+            )
         )
 
         Button(
@@ -139,10 +149,9 @@ fun AddHabitBottomSheet(
                     val habit = Habit(0, habitName, targetDaysPerWeek)
                     // Add Data to Database
                     mHabitViewModel.insertHabit(habit)
-                    /*Toast.makeText(context, "Succesfully added", Toast.LENGTH_LONG).show()*/
-                    //TODO: скрыть фрагмент при нажатии на кнопку создать
                     closeBottomSheetCallback.invoke(true)
                 } else {
+                    //TODO: уведомить пользователя об отсутствии названия Привычки в поле ввода
                     /*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*/
                 }
             },
@@ -170,9 +179,8 @@ fun inputCheck(habitName: String): Boolean {
 
 }
 
-
-/*
-@Preview(showBackground = true)
+//TODO: сделать превью для фрагмента
+/*@Preview(showBackground = true)
 @Composable
 fun AddHabitBottomSheetPreview(habitDao: HabitDao) {
     AddHabitBottomSheet(mHabitViewModel = HabitViewModel(HabitRepository(habitDao)))
