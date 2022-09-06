@@ -1,9 +1,7 @@
 package com.codeliner.habits.ui.habits
 
-import android.app.Application
-import android.content.Context
 import android.text.TextUtils
-import android.widget.Toast
+import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,7 +9,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,21 +19,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import com.codeliner.habits.MainActivity
-import com.codeliner.habits.NavigationComponent
 import com.codeliner.habits.R
-import com.codeliner.habits.data.HabitDao
-import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.model.Habit
 import com.codeliner.habits.ui.theme.GrayText
 import com.codeliner.habits.ui.theme.GreenBar
 import com.codeliner.habits.ui.theme.LightGrayBackground
-import kotlin.math.round
 
 @Composable
 fun AddHabitBottomSheet(
@@ -65,10 +54,13 @@ fun AddHabitBottomSheet(
                 fontWeight = FontWeight.Bold
             )
 
-            Icon(
-                painter = painterResource(id = R.drawable.ic_close),
-                contentDescription = "close"
-            )
+            IconButton(onClick = { closeBottomSheetCallback.invoke(true) }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_close),
+                    contentDescription = "close"
+                )
+            }
+
         }
 
         Text(
@@ -76,7 +68,7 @@ fun AddHabitBottomSheet(
             style = TextStyle(fontSize = 15.sp),
             color = GrayText,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+            modifier = Modifier.padding(vertical = 12.dp)
         )
 
         var textFieldState by remember { mutableStateOf("") }
