@@ -115,7 +115,6 @@ fun AddHabitBottomSheet(
             Text(text = "7", fontSize = 15.sp)
         }
 
-        //TODO: установить зеленый цвет слайдера
         Slider(
             value = sliderPosition,
             valueRange = 1F..7F,
@@ -132,7 +131,7 @@ fun AddHabitBottomSheet(
 
         Button(
             onClick = {
-
+                //TODO: при создании привычки чекбокс по умолчанию = false
                 val habitName = textFieldState
                 val targetDaysPerWeek = sliderPosition.toInt()
 
@@ -163,12 +162,68 @@ fun AddHabitBottomSheet(
             )
 
         }
+
+        //TODO: при редактировании привычки - вместо кнопки Create - 2 кнопки: Update и Delete
+        /*Row() {
+            Button(
+                //TODO: при нажатии на Update обновить habitName и targetDaysPerWeek для выбранной привычки
+                onClick = {
+                    val habitName = textFieldState
+                    val targetDaysPerWeek = sliderPosition.toInt()
+
+                    if(inputCheck(habitName)) {
+                        //Create Habit Object
+                        val habit = Habit(0, habitName, targetDaysPerWeek)
+                        // Add Data to Database
+                        mHabitViewModel.insertHabit(habit)
+                        closeBottomSheetCallback.invoke(true)
+                    } else {
+                        //TODO: уведомить пользователя об отсутствии названия Привычки в поле ввода
+                        *//*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*//*
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth(0.75f)
+            ) {
+
+                Text(
+                    text = "Update",
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    style = TextStyle(fontSize = 16.sp),
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                //TODO: при нажатии на Delete - удалить привычку из списка
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.padding(top = 24.dp, start =  8.dp)
+            ) {
+
+                Text(
+                    text = "Delete",
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    style = TextStyle(fontSize = 16.sp),
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+
+            }
+        }*/
     }
 }
 
 fun inputCheck(habitName: String): Boolean {
     return !(TextUtils.isEmpty(habitName))
-
 }
 
 //TODO: сделать превью для фрагмента

@@ -56,10 +56,10 @@ fun HabitItem( // SOLID - S
 
             Spacer(modifier = Modifier.weight(1f))
 
-            /*Counter(
-                lastWeekCheckCount = habit.lastWeekCheckCount,
+            Counter(
+                lastWeekCheckCount = 0,
                 targetWeekCheckCount = habit.targetWeekCheckCount
-            )*/
+            )
         }
 
         // TODO: Linear Progress Indicator instead dividers
@@ -93,11 +93,10 @@ fun HabitItem( // SOLID - S
 @Composable
 private fun Counter(
     lastWeekCheckCount: Int,
-    targetWeekCheckCount: Int,
-    modifier: Modifier = Modifier
+    targetWeekCheckCount: Int
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .background(LightGrayBackground, shape = RoundedCornerShape(12.dp))
             .padding(8.dp)
     ) {
