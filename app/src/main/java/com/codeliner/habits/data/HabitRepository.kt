@@ -9,4 +9,8 @@ class HabitRepository(private val habitDao: HabitDao) {
     suspend fun insertHabit(habit: Habit) {
         habitDao.insertHabit(habit)
     }
+
+    suspend fun updateCheckedHabit(habit: Habit) {
+        habitDao.updateCheckedHabit(habit.id, habit.checked, habit.countCheckedDay, habit.lastCheckedDate)
+    }
 }

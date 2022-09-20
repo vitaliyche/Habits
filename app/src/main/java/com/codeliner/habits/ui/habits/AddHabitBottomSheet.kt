@@ -1,7 +1,6 @@
 package com.codeliner.habits.ui.habits
 
 import android.text.TextUtils
-import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +25,11 @@ import com.codeliner.habits.model.Habit
 import com.codeliner.habits.ui.theme.GrayText
 import com.codeliner.habits.ui.theme.GreenBar
 import com.codeliner.habits.ui.theme.LightGrayBackground
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
+const val patternDate = "dd/MM/yyyy"
 @Composable
 fun AddHabitBottomSheet(
     mHabitViewModel: HabitViewModel,
@@ -131,13 +134,14 @@ fun AddHabitBottomSheet(
 
         Button(
             onClick = {
-                //TODO: при создании привычки чекбокс по умолчанию = false
                 val habitName = textFieldState
                 val targetDaysPerWeek = sliderPosition.toInt()
 
                 if(inputCheck(habitName)) {
+                    textFieldState = ""
                     //Create Habit Object
-                    val habit = Habit(0, habitName, targetDaysPerWeek)
+                    val currentDate = getCurrentDate()
+                    val habit = Habit(0, false, habitName, 0, targetDaysPerWeek, currentDate)
                     // Add Data to Database
                     mHabitViewModel.insertHabit(habit)
                     closeBottomSheetCallback.invoke(true)
@@ -224,6 +228,12 @@ fun AddHabitBottomSheet(
 
 fun inputCheck(habitName: String): Boolean {
     return !(TextUtils.isEmpty(habitName))
+}
+
+fun getCurrentDate(): String {
+    val formatter: DateFormat = SimpleDateFormat(patternDate, Locale.ENGLISH)
+    val today = Date()
+    return formatter.format(today)
 }
 
 //TODO: сделать превью для фрагмента

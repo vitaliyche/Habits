@@ -1,11 +1,8 @@
 package com.codeliner.habits.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 import androidx.room.*
-import com.codeliner.habits.model.CheckedItem
 import com.codeliner.habits.model.Habit
-import com.codeliner.habits.model.relations.HabitWithCheckedItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,4 +14,11 @@ interface HabitDao {
     @Query("SELECT * FROM habit ORDER BY id ASC")
     fun getAllData(): Flow<List<Habit>>
 
+    @Query("UPDATE habit SET " +
+            "checked=:checked, " +
+            "countCheckedDay=:countCheckedDay, " +
+            "lastCheckedDate=:lastCheckedDate " +
+            "WHERE id=:id"
+    )
+    suspend fun updateCheckedHabit(id:Int, checked:Boolean, countCheckedDay:Int, lastCheckedDate: String)
 }

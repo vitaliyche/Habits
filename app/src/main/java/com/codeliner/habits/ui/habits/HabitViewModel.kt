@@ -5,8 +5,10 @@ import androidx.lifecycle.*
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.model.Habit
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HabitViewModel(
     private val habitRepository: HabitRepository,
@@ -23,7 +25,19 @@ class HabitViewModel(
     fun loadData() {
         viewModelScope.launch {
             habitRepository.getAllData().collect {
-                _habitsData.postValue(it)
+                val list:List<Habit> = it.map { habit ->
+                    if(habit.lastCheckedDate != "") {
+                        val formatter: DateFormat = SimpleDateFormat(patternDate, Locale.ENGLISH)
+                        val currentDateS = getCurrentDate()
+                        val savedDateS = habit.lastCheckedDate
+                        val savedDate = formatter.parse(savedDateS)
+                        val currentDate = formatter.parse(currentDateS)
+                        habit.checked = currentDate == savedDate && habit.countCheckedDay > 0
+                        // 0 - currentDate is equal to savedDate, >0 - currentDate is after savedDate, <0 currentDate is before savedDate
+                    }
+                    habit
+                }
+                _habitsData.postValue(list)
             }
         }
     }
@@ -31,6 +45,12 @@ class HabitViewModel(
     fun insertHabit(habit: Habit) {
         viewModelScope.launch(Dispatchers.IO) {
             habitRepository.insertHabit(habit)
+        }
+    }
+
+    fun updateCheckedHabit(habit: Habit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            habitRepository.updateCheckedHabit(habit)
         }
     }
 }

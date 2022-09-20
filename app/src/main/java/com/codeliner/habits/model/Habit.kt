@@ -8,10 +8,10 @@ data class Habit(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    /*val checked: Boolean,*/
+    var checked: Boolean = false,
     val habitName: String,
-    /*val lastCheckedDate: String,
-    val lastWeekCheckCount: Int,*/
+    var countCheckedDay: Int,
     val targetWeekCheckCount: Int,
+    var lastCheckedDate: String = "",
     /*val lastMonthCheckCount: Int*/
 )

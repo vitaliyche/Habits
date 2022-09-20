@@ -17,14 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.codeliner.habits.R
 import com.codeliner.habits.data.HabitRepository
-import com.codeliner.habits.ui.HabitItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
@@ -105,7 +103,17 @@ fun HabitsScreen(
             val habits by viewModel.habitsData.observeAsState()
             LazyColumn {
                 items(items = habits ?: arrayListOf()) { habit ->
-                    HabitItem(habit = habit)
+                    HabitItem(habit = habit) { value ->
+                        if(value) {
+                            ++habit.countCheckedDay
+                            habit.lastCheckedDate = getCurrentDate()
+                        } else {
+                            --habit.countCheckedDay
+                            habit.lastCheckedDate = ""
+                        }
+                        habit.checked = value
+                        viewModel.updateCheckedHabit(habit)
+                    }
                 }
             }
         }

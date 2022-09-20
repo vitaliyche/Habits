@@ -1,4 +1,4 @@
-package com.codeliner.habits.ui
+package com.codeliner.habits.ui.habits
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,13 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codeliner.habits.model.Habit
-import com.codeliner.habits.ui.theme.GrayText
 import com.codeliner.habits.ui.theme.GreenBar
 import com.codeliner.habits.ui.theme.LightGrayBackground
 
@@ -23,8 +21,8 @@ import com.codeliner.habits.ui.theme.LightGrayBackground
 fun HabitItem( // SOLID - S
     habit: Habit,
     modifier: Modifier = Modifier, // SOLID - O
+    checkboxClickCallback:(Boolean) -> Unit
 ) {
-
     Column(
         modifier = modifier
     ) {
@@ -33,12 +31,17 @@ fun HabitItem( // SOLID - S
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val checkedState = remember { mutableStateOf(true) }
+            val checkedState = remember { mutableStateOf(habit.checked) }
+            val countCheckedDay = remember { mutableStateOf(habit.countCheckedDay) }
 
             Checkbox(
                 checked = checkedState.value,
-                onCheckedChange = {checkedState.value = it},
-                colors = CheckboxDefaults.colors(GreenBar)
+                onCheckedChange = {
+                        if(it) ++countCheckedDay.value else --countCheckedDay.value
+                        checkedState.value = it
+                        checkboxClickCallback.invoke(it)
+                },
+                colors = CheckboxDefaults.colors(checkedColor = GreenBar)
             )
 
             Column(modifier = Modifier.padding(start = 8.dp)) {
@@ -57,7 +60,7 @@ fun HabitItem( // SOLID - S
             Spacer(modifier = Modifier.weight(1f))
 
             Counter(
-                lastWeekCheckCount = 0,
+                lastWeekCheckCount = countCheckedDay.value,
                 targetWeekCheckCount = habit.targetWeekCheckCount
             )
         }
@@ -109,15 +112,15 @@ private fun Counter(
 @Preview(showBackground = true)
 @Composable
 private fun HabitItemPreview() {
-    HabitItem(previewHabitItem)
+    HabitItem(previewHabitItem) {}
 }
 
 private val previewHabitItem = Habit(
     id = 0,
-    /*checked = false,*/
+    checked = false,
     habitName = "Name",
-    /*lastCheckedDate = "sd",
-    lastWeekCheckCount = 0,*/
     targetWeekCheckCount = 0,
-    /*lastMonthCheckCount = 0*/
+    countCheckedDay = 0,
+    /*lastCheckedDate = "sd",
+    lastMonthCheckCount = 0*/
 )
