@@ -1,6 +1,8 @@
 package com.codeliner.habits.ui.habits
 
 import android.text.TextUtils
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,18 +10,26 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.codeliner.habits.Constant
 import com.codeliner.habits.R
 import com.codeliner.habits.model.Habit
 import com.codeliner.habits.ui.theme.GrayText
@@ -30,12 +40,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val patternDate = "dd/MM/yyyy"
-@Composable
-fun AddHabitBottomSheet(
-    mHabitViewModel: HabitViewModel,
-    closeBottomSheetCallback:(Boolean) -> Unit
-) {
 
+@Composable
+fun CreateOrEditHabitScreen(
+    navController: NavController,
+    habit: Habit? = null
+) {
+    val viewModel: HabitViewModel = hiltViewModel()
+    val title = if (habit == null) "Create Habit" else "Edit Habit"
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,19 +64,32 @@ fun AddHabitBottomSheet(
         ) {
 
             Text(
-                text = "Create Habit",
+                text = title,
                 fontSize = 20.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold
             )
 
-            IconButton(onClick = { closeBottomSheetCallback.invoke(true) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_close),
-                    contentDescription = "close"
-                )
-            }
+            Row() {
+                AnimatedVisibility(visible = habit != null) {
+                    IconButton(onClick = {
+                        viewModel.deleteHabit(habit!!)
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "close"
+                        )
+                    }
+                }
 
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = "close"
+                    )
+                }
+            }
         }
 
         Text(
@@ -74,7 +100,7 @@ fun AddHabitBottomSheet(
             modifier = Modifier.padding(vertical = 12.dp)
         )
 
-        var textFieldState by remember { mutableStateOf("") }
+        var textFieldState by remember { mutableStateOf(habit?.habitName ?: "") }
         val focusManager = LocalFocusManager.current
 
         BasicTextField(
@@ -101,7 +127,6 @@ fun AddHabitBottomSheet(
             modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
         )
 
-        var sliderPosition by remember { mutableStateOf(3f) }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,12 +142,17 @@ fun AddHabitBottomSheet(
             Text(text = "6", fontSize = 15.sp)
             Text(text = "7", fontSize = 15.sp)
         }
+        var sliderPosition by remember { mutableStateOf(habit?.targetWeekCheckCount?.toFloat() ?: 3f) }
 
         Slider(
             value = sliderPosition,
             valueRange = 1F..7F,
             steps = 5,
-            onValueChange = { sliderPosition = it },
+            onValueChange = {
+                navController.previousBackStackEntry?.savedStateHandle?.get<Habit>(Constant.ADD_EDIT_HABIT_KEY)?.targetWeekCheckCount = it.toInt()
+                sliderPosition = it
+            },
+            onValueChangeFinished = { },
             colors = SliderDefaults.colors(
                 thumbColor = GreenBar,
                 activeTrackColor = GreenBar,
@@ -136,18 +166,23 @@ fun AddHabitBottomSheet(
             onClick = {
                 val habitName = textFieldState
                 val targetDaysPerWeek = sliderPosition.toInt()
-
-                if(inputCheck(habitName)) {
-                    textFieldState = ""
-                    //Create Habit Object
+                val countCheckedDay = habit?.countCheckedDay ?: 0
+                val checked = habit?.checked ?: false
+                val habitId = habit?.id ?: 0
+                if (inputCheck(habitName)) {
+                    //Create or Edit Habit Object
                     val currentDate = getCurrentDate()
-                    val habit = Habit(0, false, habitName, 0, targetDaysPerWeek, currentDate)
+                    val hab = Habit(habitId, checked, habitName, countCheckedDay, targetDaysPerWeek.toInt(), currentDate)
                     // Add Data to Database
-                    mHabitViewModel.insertHabit(habit)
-                    closeBottomSheetCallback.invoke(true)
+                    if (habit == null) {
+                        viewModel.insertHabit(hab)
+                    } else {
+                        viewModel.updateHabit(hab)
+                    }
+                    navController.popBackStack()
                 } else {
-                    //TODO: уведомить пользователя об отсутствии названия Привычки в поле ввода
-                    /*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*/
+
+                    Toast.makeText(context, "Please fill Habit Name field", Toast.LENGTH_LONG).show()
                 }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black),
@@ -158,7 +193,7 @@ fun AddHabitBottomSheet(
         ) {
 
             Text(
-                text = "Create",
+                text = if (habit == null) "Create" else "Edit",
                 modifier = Modifier.padding(vertical = 20.dp),
                 style = TextStyle(fontSize = 16.sp),
                 color = Color.White,
@@ -166,63 +201,6 @@ fun AddHabitBottomSheet(
             )
 
         }
-
-        //TODO: при редактировании привычки - вместо кнопки Create - 2 кнопки: Update и Delete
-        /*Row() {
-            Button(
-                //TODO: при нажатии на Update обновить habitName и targetDaysPerWeek для выбранной привычки
-                onClick = {
-                    val habitName = textFieldState
-                    val targetDaysPerWeek = sliderPosition.toInt()
-
-                    if(inputCheck(habitName)) {
-                        //Create Habit Object
-                        val habit = Habit(0, habitName, targetDaysPerWeek)
-                        // Add Data to Database
-                        mHabitViewModel.insertHabit(habit)
-                        closeBottomSheetCallback.invoke(true)
-                    } else {
-                        //TODO: уведомить пользователя об отсутствии названия Привычки в поле ввода
-                        *//*Toast.makeText(this, "Please fill Habit Name field", Toast.LENGTH_LONG).show()*//*
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black),
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(0.75f)
-            ) {
-
-                Text(
-                    text = "Update",
-                    modifier = Modifier.padding(vertical = 20.dp),
-                    style = TextStyle(fontSize = 16.sp),
-                    color = Color.White,
-                    textAlign = TextAlign.Center
-                )
-
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                //TODO: при нажатии на Delete - удалить привычку из списка
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.padding(top = 24.dp, start =  8.dp)
-            ) {
-
-                Text(
-                    text = "Delete",
-                    modifier = Modifier.padding(vertical = 20.dp),
-                    style = TextStyle(fontSize = 16.sp),
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
-                )
-
-            }
-        }*/
     }
 }
 
@@ -236,9 +214,9 @@ fun getCurrentDate(): String {
     return formatter.format(today)
 }
 
-//TODO: сделать превью для фрагмента
-/*@Preview(showBackground = true)
+
+@Preview(showBackground = true)
 @Composable
-fun AddHabitBottomSheetPreview(habitDao: HabitDao) {
-    AddHabitBottomSheet(mHabitViewModel = HabitViewModel(HabitRepository(habitDao)))
-}*/
+fun CreateOrEditHabitScreenPreview() {
+    CreateOrEditHabitScreen(navController = rememberNavController())
+}

@@ -1,15 +1,11 @@
 package com.codeliner.habits.ui.habits
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,40 +15,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.codeliner.habits.Constant
 import com.codeliner.habits.R
-import com.codeliner.habits.data.HabitRepository
+import com.codeliner.habits.Screen
+import com.codeliner.habits.model.Habit
+import com.codeliner.habits.noRippleClickable
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun HabitsScreen(
-    modifier: Modifier = Modifier,
-    habitRepository: HabitRepository,
     navController: NavController,
-    viewModel: HabitViewModel = viewModel(
-        factory = HabitViewModelFactory(habitRepository)
-    ),
 ) {
-
-    val bottomSheetState =
-        rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
-    val scaffoldState =
-        rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
     val scope = rememberCoroutineScope()
-
-    BottomSheetScaffold(
-        sheetPeekHeight = 0.dp,
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            AddHabitBottomSheet(viewModel, closeBottomSheetCallback = {
-                scope.launch {
-                    bottomSheetState.collapse()
-                }
-            })
-        }
-    ) {
+    val viewModel: HabitViewModel = hiltViewModel()
 
         Column(
             modifier = Modifier
@@ -79,13 +56,9 @@ fun HabitsScreen(
                     tint = Color.DarkGray,
                     modifier = Modifier
                         .size(28.dp)
-                        .clickable {
+                        .noRippleClickable {
                             scope.launch {
-                                if (bottomSheetState.isCollapsed) {
-                                    bottomSheetState.expand()
-                                } else {
-                                    bottomSheetState.collapse()
-                                }
+                                openAddEditScreen(habit = null, navController = navController)
                             }
                         }
                 )
@@ -103,8 +76,8 @@ fun HabitsScreen(
             val habits by viewModel.habitsData.observeAsState()
             LazyColumn {
                 items(items = habits ?: arrayListOf()) { habit ->
-                    HabitItem(habit = habit) { value ->
-                        if(value) {
+                    HabitItem(habit = habit, checkboxClickCallback = { value ->
+                        if (value) {
                             ++habit.countCheckedDay
                             habit.lastCheckedDate = getCurrentDate()
                         } else {
@@ -113,18 +86,19 @@ fun HabitsScreen(
                         }
                         habit.checked = value
                         viewModel.updateCheckedHabit(habit)
-                    }
+
+                    }, clickItem = {
+                        scope.launch {
+                            openAddEditScreen(habit = habit, navController = navController)
+                        }
+                    })
                 }
             }
-        }
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun HabitsScreenPreview() {
-    HabitsScreen(
-        modifier = Modifier,
-        viewModel = HabitViewModel(HabitRepository())
-    )
-}*/
+
+fun openAddEditScreen(habit: Habit?, navController: NavController) {
+    navController.currentBackStackEntry?.savedStateHandle?.set(Constant.ADD_EDIT_HABIT_KEY, habit)
+    navController.navigate(Screen.CreateOrAddHabitScreen.route)
+}

@@ -9,11 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codeliner.habits.model.Habit
+import com.codeliner.habits.noRippleClickable
 import com.codeliner.habits.ui.theme.GreenBar
 import com.codeliner.habits.ui.theme.LightGrayBackground
 
@@ -21,10 +21,11 @@ import com.codeliner.habits.ui.theme.LightGrayBackground
 fun HabitItem( // SOLID - S
     habit: Habit,
     modifier: Modifier = Modifier, // SOLID - O
-    checkboxClickCallback:(Boolean) -> Unit
+    checkboxClickCallback:(Boolean) -> Unit,
+    clickItem:() -> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier.noRippleClickable { clickItem.invoke() }
     ) {
         
         Row(
@@ -112,7 +113,7 @@ private fun Counter(
 @Preview(showBackground = true)
 @Composable
 private fun HabitItemPreview() {
-    HabitItem(previewHabitItem) {}
+    HabitItem(previewHabitItem, checkboxClickCallback = {}, clickItem = {})
 }
 
 private val previewHabitItem = Habit(

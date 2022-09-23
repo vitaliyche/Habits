@@ -1,19 +1,21 @@
 package com.codeliner.habits.ui.habits
 
-import android.app.Application
+
 import androidx.lifecycle.*
 import com.codeliner.habits.data.HabitRepository
 import com.codeliner.habits.model.Habit
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class HabitViewModel(
+@HiltViewModel
+class HabitViewModel @Inject constructor(
     private val habitRepository: HabitRepository,
-    application: Application
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _habitsData = MutableLiveData<List<Habit>>()
     val habitsData: LiveData<List<Habit>> = _habitsData
@@ -53,15 +55,17 @@ class HabitViewModel(
             habitRepository.updateCheckedHabit(habit)
         }
     }
-}
 
-class HabitViewModelFactory(
-    private val habitRepository: HabitRepository
-) : ViewModelProvider.Factory {
+    fun updateHabit(habit: Habit) {
+        viewModelScope.launch {
+            habitRepository.updateHabit(habit)
+        }
+    }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return HabitViewModel(habitRepository = habitRepository, application = Application()) as T
+    fun deleteHabit(habit: Habit) {
+        viewModelScope.launch {
+            habitRepository.deleteHabit(habit)
+        }
     }
 }
 

@@ -21,4 +21,10 @@ interface HabitDao {
             "WHERE id=:id"
     )
     suspend fun updateCheckedHabit(id:Int, checked:Boolean, countCheckedDay:Int, lastCheckedDate: String)
+
+    @Update
+    suspend fun updateHabit(habit: Habit)
+
+    @Delete
+    suspend fun deleteHabit(habit: Habit)
 }
